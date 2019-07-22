@@ -1,14 +1,13 @@
 package net.slipp.web;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.slipp.domain.User;
@@ -22,6 +21,11 @@ public class UserController {
 	@Autowired //DB 끌고오는애
 	private UserRepository userRepository;
 
+	@GetMapping("/form")
+	public String form() {
+		return "/user/form";
+	}
+	
 	@PostMapping("")
 	public String create(User user) {
 		System.out.println("user :" + user);
@@ -34,4 +38,21 @@ public class UserController {
 		model.addAttribute("users",userRepository.findAll());	// 이제 리스트에서 데이터를 가져오는게 아니고 DB에서 데이터를 가져옴.	
 		return "/user/list";
 	}
+	@GetMapping("/{id}/form")
+	public String updateForm(@PathVariable Long id, Model model) {
+	//	User user = userRepository.findOne(id); 이걸로 안돼서 아래 코드로 수정. 
+		User user = userRepository.findById(id).get();  
+		model.addAttribute("user", user);
+		
+		return "/user/updateForm";
+	}
+	
+	@PutMapping("/{id}")
+	public String update(@PathVariable Long id, User newUser) {
+		User user=userRepository.findById(id).get();
+		user.update(newUser);
+		userRepository.save(user); //save할때 userRepository의 동작방식 - 없는 정보면 새롭게 insert, 기존 정보면 추가로 update
+		return "redirect:/users";
+	}
+	
 }

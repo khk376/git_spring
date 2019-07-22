@@ -19,6 +19,9 @@ public class User {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	public String getUserId() {
+		return userId;
+	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -31,6 +34,12 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+	}
+	public void update(User newUser) {
+		this.password=newUser.password;
+		this.name=newUser.name;
+		this.email=newUser.email;
+		//정보만 변경하는 것이므로 id는 변경x
 	}
 	
 }
