@@ -1,6 +1,8 @@
 package net.slipp.web;
 
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,31 @@ public class UserController {
 	@Autowired //DB 끌고오는애
 	private UserRepository userRepository;
 
+	
+	@GetMapping("/loginForm")
+	public String loginForm() {
+		return "/user/login";
+	}
+	
+	@PostMapping("/login") 
+	public String login(String userId, String password, HttpSession session) {
+		User user = userRepository.findByUserId(userId);
+		
+		if(user==null) {
+			System.out.println("login failure!");
+			return "redirect:/users/loginForm";
+		}
+		
+		if(!password.equals(user.getPassword())){
+			System.out.println("login failure!");
+			return "redirect:/users/loginForm";
+			
+		}
+		System.out.println("login success!");
+		session.setAttribute("user", user);		
+		return "redirect:/";
+	}
+	
 	@GetMapping("/form")
 	public String form() {
 		return "/user/form";
@@ -54,5 +81,7 @@ public class UserController {
 		userRepository.save(user); //save할때 userRepository의 동작방식 - 없는 정보면 새롭게 insert, 기존 정보면 추가로 update
 		return "redirect:/users";
 	}
+
+	
 	
 }
