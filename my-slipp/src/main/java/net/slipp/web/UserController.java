@@ -32,21 +32,28 @@ public class UserController {
 	@PostMapping("/login") 
 	public String login(String userId, String password, HttpSession session) {
 		User user = userRepository.findByUserId(userId);
-		
+	
 		if(user==null) {
-			System.out.println("login failure!");
+			System.out.println("Login Failure!");
 			return "redirect:/users/loginForm";
 		}
 		
 		if(!password.equals(user.getPassword())){
-			System.out.println("login failure!");
+			System.out.println("Login Failure!");
 			return "redirect:/users/loginForm";
 			
-		}
-		System.out.println("login success!");
+		} 
+		System.out.println("Login Success!");
 		session.setAttribute("user", user);		
 		return "redirect:/";
 	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("user");
+		return "redirect:/";
+	}
+	
 	
 	@GetMapping("/form")
 	public String form() {
@@ -65,11 +72,11 @@ public class UserController {
 		model.addAttribute("users",userRepository.findAll());	// 이제 리스트에서 데이터를 가져오는게 아니고 DB에서 데이터를 가져옴.	
 		return "/user/list";
 	}
+	
 	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model) {
 	//	User user = userRepository.findOne(id); 이걸로 안돼서 아래 코드로 수정. 
-		User user = userRepository.findById(id).get();  
-		model.addAttribute("user", user);
+	 
 		
 		return "/user/updateForm";
 	}
